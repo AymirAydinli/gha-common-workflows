@@ -1,0 +1,25 @@
+name: Build and Push Container images.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-push-container-images:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+      - name: Install Task
+        uses: supplypike/setup-bin@8e3f88b4f143d9b5c3497f0fc12d45c83c123787 #v4.0.0
+        with:
+          uri: https://github.com/go-task/task/releases/download/v3.46.4/task_linux_amd64.tar.gz
+          name: task
+          version: v3.46.4
+      - name: Login to Docker Hub # v3.5.0
+        if: ${{ !env.ACT }}
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
